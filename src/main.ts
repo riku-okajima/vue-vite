@@ -10,4 +10,4 @@ const pinia = createPinia();
 // 永続化ライブラリ
 pinia.use(createPersistedState());
 
-createApp(App).use(router).use(pinia).use(createPersistedState).mount("#app");
+createApp(App).use(router).use(pinia).mount("#app");
