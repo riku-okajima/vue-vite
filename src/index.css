@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h4 {
+  @apply mt-6 text-2xl border-b-1;
+}
+input,
+textarea {
+  @apply w-full rounded-md border-1 border-gray-300 px-3 py-2 text-gray-300 placeholder-gray-500 transition duration-150 ease-in-out focus:bg-white focus:text-gray-900 focus:outline-none leading-initial;
+}
+.nav-link {
+  @apply text-base leading-5 text-black text-opacity-50 hover:text-black hover:text-opacity-75 cursor-pointer;
+}
+
+.tag {
+  @apply border-white border-4 text-white text-xs flex items-center px-1 rounded-md;
+}
+.btn-blue {
+  @apply rounded border-1 border-white bg-blue-primary py-2 px-4 text-white transition duration-150 hover:bg-white hover:text-black mt-2 sm:mt-0;
+}
+.btn-red {
+  @apply rounded border-1 border-white bg-red-500 py-2 px-4 text-white transition duration-150 hover:bg-white hover:text-black mt-2 sm:mt-0;
+}
+
+.btn-hamburger {
+  @apply inline-flex items-center justify-center rounded-md border-2 border-gray-500 border-opacity-10 p-2 text-gray-800 focus:border-2 focus:border-gray-700 focus:border-opacity-10 focus:outline-none;
+}
+
+.form-control {
+  @apply block w-full py-2 px-3 text-base font-normal text-black bg-white bg-clip-padding border border-gray-300 rounded transition-colors duration-150 ease-in-out;
+}
+
+table,
+tr,
+th,
+td {
+  @apply border border-solid border-gray-300 border-opacity-50;
+}
