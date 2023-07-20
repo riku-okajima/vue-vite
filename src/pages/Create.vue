@@ -8,11 +8,13 @@ import * as yup from "yup";
 import dayjs from "dayjs";
 import ListLinkButton from "../components/atoms/ListLinkButton.vue";
 import RequiredTag from "../components/atoms/RequiredTag.vue";
-import { Presentation, usePresentationStore, categories } from "../store/presentation";
+import { Presentation, usePresentationStore, categories, useListsStore } from "../store/presentation";
 
-const store = usePresentationStore();
-const { lastName, firstName, category, theme, detail, presented_at, lists } = storeToRefs(store);
+const presentationStore = usePresentationStore();
+const listsStore = useListsStore();
+const { lastName, firstName, category, theme, detail, presented_at } = storeToRefs(presentationStore);
 const valueOfVueDatePicker = ref(presented_at.value);
+const { lists } = storeToRefs(listsStore);
 
 // バリデーションスキーマ
 const formSchema = yup.object({
@@ -25,7 +27,7 @@ const formSchema = yup.object({
 const onSubmit: SubmissionHandler<any, unknown> = (values: Presentation) => {
   const { firstName, lastName, category, theme, detail }: Presentation = values;
   const reqData: Presentation = {
-    id: store.id++,
+    id: presentationStore.id++,
     firstName: firstName,
     lastName: lastName,
     category: category,
@@ -33,7 +35,7 @@ const onSubmit: SubmissionHandler<any, unknown> = (values: Presentation) => {
     detail: detail,
     presented_at: valueOfVueDatePicker.value,
   };
-  store.addLists(reqData);
+  listsStore.addLists(reqData);
 };
 
 const setDate = (date: Date): void => {
@@ -75,17 +77,19 @@ const formatDate = (date: Date): string => {
       </Field>
     </div>
     <div>
-      <div class="flex gap-2">
-        <label for="theme">テーマ</label>
-        <RequiredTag :isRequired="true" />
+      <div class="flex justify-between">
+        <div class="flex gap-2">
+          <label for="theme">テーマ</label>
+          <RequiredTag :isRequired="true" />
+        </div>
+        <p class="text-right text-gray-400">
+          現在の文字数
+          <span>
+            {{ theme.length }}
+          </span>
+        </p>
       </div>
       <Field type="text" name="theme" id="theme" v-model="theme" />
-      <p class="text-right text-gray-400">
-        現在の文字数
-        <span class="text-lg">
-          {{ theme.length }}
-        </span>
-      </p>
       <ErrorMessage name="theme" class="text-sm text-red-600" />
     </div>
     <div>
@@ -137,6 +141,6 @@ const formatDate = (date: Date): string => {
         </tr>
       </tbody>
     </table>
-    <button @click="store.$reset" class="flex m-auto btn-red">Reset</button>
+    <button @click="listsStore.$reset" class="flex m-auto btn-red">Reset</button>
   </div>
 </template>

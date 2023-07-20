@@ -25,6 +25,13 @@ export const usePresentationStore = defineStore("presentation", {
     theme: "" as Presentation["theme"],
     detail: "" as Presentation["detail"],
     presented_at: new Date() as Presentation["presented_at"],
+  }),
+  persist: {
+    storage: sessionStorage,
+  },
+});
+export const useListsStore = defineStore("lists", {
+  state: () => ({
     lists: [] as Presentation[],
   }),
   actions: {
