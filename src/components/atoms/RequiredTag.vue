@@ -4,6 +4,6 @@ const props = defineProps({
 });
 </script>
 <template>
-  <span v-if="isRequired" class="tag bg-red-500">必須</span>
-  <span v-else class="tag bg-gray-400">任意</span>
+  <span v-if="isRequired" class="tag bg-red-500">required</span>
+  <span v-else class="tag bg-gray-400">optional</span>
 </template>

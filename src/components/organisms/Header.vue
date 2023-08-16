@@ -13,14 +13,26 @@ interface State {
 const state: State = reactive({
   toggle: false,
 });
-
+const headerIcons = ["mdi-magnify", "mdi-home", "mdi-dots-vertical"];
+const navItems = [
+  {
+    name: "Add Presentation",
+    icon: "mdi-pencil-plus",
+    link: "/create",
+  },
+  {
+    name: "Show Lists",
+    icon: "mdi-format-list-bulleted-square",
+    link: "/list",
+  },
+];
 const changeToggleState = (): void => {
   state.toggle = !state.toggle;
 };
 </script>
 
 <template>
-  <nav class="sticky top-0">
+  <!-- <nav class="sticky top-0">
     <div class="bg-gray-light">
       <div class="mx-auto px-4">
         <div class="flex h-14 items-center justify-between">
@@ -40,5 +52,27 @@ const changeToggleState = (): void => {
       </div>
       <ToggleMenu :toggleState="state.toggle" />
     </div>
-  </nav>
+  </nav> -->
+
+  <v-app-bar color="primary" dark clipped-left>
+    <v-app-bar-nav-icon @click.stop="changeToggleState"></v-app-bar-nav-icon>
+    <v-toolbar-title>RPC Presentation App</v-toolbar-title>
+    <v-tabs>
+      <v-tab v-for="(item, index) in navItems" :key="index" :to="item.link">
+        {{ item.name }}
+      </v-tab>
+    </v-tabs>
+    <v-btn v-for="(icon, index) in headerIcons" :key="index" :icon="icon" variant="text" />
+  </v-app-bar>
+  <v-navigation-drawer v-model="state.toggle" clipped temporary>
+    <v-container>
+      <v-list-item>
+        <v-list-item-title class="title">MENU</v-list-item-title>
+      </v-list-item>
+      <v-divider></v-divider>
+      <v-list nav dense>
+        <v-list-item v-for="item in navItems" :prepend-icon="item.icon" :title="item.name" :to="item.link" />
+      </v-list>
+    </v-container>
+  </v-navigation-drawer>
 </template>

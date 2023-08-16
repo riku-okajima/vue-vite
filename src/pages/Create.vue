@@ -1,125 +1,139 @@
 <script setup lang="ts">
-import { useForm, useField, Form, Field, ErrorMessage, SubmissionHandler } from "vee-validate";
-import { ref } from "vue";
+import { Form, Field, ErrorMessage, SubmissionHandler } from "vee-validate";
+import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
+import { VDatePicker } from "vuetify/labs/VDatePicker";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import * as yup from "yup";
 import dayjs from "dayjs";
-import ListLinkButton from "../components/atoms/ListLinkButton.vue";
 import RequiredTag from "../components/atoms/RequiredTag.vue";
 import { Presentation, usePresentationStore, categories, useListsStore } from "../store/presentation";
+import { supabase } from "../supabase";
 
 const presentationStore = usePresentationStore();
 const listsStore = useListsStore();
-const { lastName, firstName, category, theme, detail, presented_at } = storeToRefs(presentationStore);
-const valueOfVueDatePicker = ref(presented_at.value);
+const { lastName, firstName, category, theme, memo, presentedAt } = storeToRefs(presentationStore);
 const { lists } = storeToRefs(listsStore);
 
-// バリデーションスキーマ
+// // バリデーションスキーマ
 const formSchema = yup.object({
-  lastName: yup.string().required("必須項目です").max(10, "10文字以内で入力してください"),
-  firstName: yup.string().required("必須項目です").max(10, "10文字以内で入力してください"),
-  theme: yup.string().required("必須項目です"),
+  lastName: yup.string().required("Last name is required").max(10, "Last name must be less than 10 characters"),
+  firstName: yup.string().required("First name is required").max(10, "First name must be less than 10 characters"),
+  theme: yup.string().required("Theme is required"),
 });
 
+const fetchEmployeesData = async () => {
+  try {
+    const { data } = await supabase.from("employees").select("*");
+    console.log(data);
+  } catch (e) {
+    console.error(e);
+  }
+};
+// 初期表示処理
+onMounted(() => {
+  fetchEmployeesData();
+});
 // 送信処理
 const onSubmit: SubmissionHandler<any, unknown> = (values: Presentation) => {
-  const { firstName, lastName, category, theme, detail }: Presentation = values;
+  const { firstName, lastName, category, theme, memo, presentedAt }: Presentation = values;
   const reqData: Presentation = {
     id: presentationStore.id++,
     firstName: firstName,
     lastName: lastName,
-    category: category,
+    category: Number(category),
     theme: theme,
-    detail: detail,
-    presented_at: valueOfVueDatePicker.value,
+    memo: memo,
+    presentedAt: presentedAt,
   };
   listsStore.addLists(reqData);
 };
-
-const setDate = (date: Date): void => {
-  presented_at.value = date;
-};
-const formatDate = (date: Date): string => {
-  return dayjs(date).format("YYYY/MM/DD");
-};
 </script>
 <template>
-  <div class="text-right">
-    <ListLinkButton />
-  </div>
-
-  <h4>じゆうけんきゅうを追加する</h4>
+  <h4>Add Presentation</h4>
   <Form @submit="onSubmit" :validation-schema="formSchema" class="m-auto md:max-w-2xl flex flex-col gap-5">
     <div class="md:flex md:gap-4 mt-5">
       <div class="md:w-full">
         <div class="flex gap-2">
-          <label for="lastName">姓</label>
           <RequiredTag :isRequired="true" />
         </div>
-        <Field type="text" name="lastName" class="form-control" v-model="lastName" />
+        <Field name="lastName" v-model="lastName">
+          <v-text-field :max-errors="10" :counter="10" label="Last name" name="lastName" v-model="lastName" />
+        </Field>
         <ErrorMessage name="lastName" class="text-sm text-red-600" />
       </div>
       <div class="md:w-full">
         <div class="flex gap-2">
-          <label for="firstName">名</label>
           <RequiredTag :isRequired="true" />
         </div>
-        <Field type="text" name="firstName" class="form-control" v-model="firstName" />
+        <Field name="firstName" v-model="firstName">
+          <v-text-field :counter="10" label="First name" name="firstName" v-model="firstName" />
+        </Field>
         <ErrorMessage name="firstName" class="text-sm text-red-600" />
       </div>
     </div>
     <div>
-      <label for="category">カテゴリー</label>
-      <Field as="select" name="category" id="category" class="form-control" v-model="category">
-        <option v-for="c in categories" :value="c.value" :key="c.value">{{ c.label }}</option>
+      <Field name="category" v-model="category">
+        <v-select :items="categories" item-title="label" item-value="value" label="Category" v-model="category" />
       </Field>
     </div>
     <div>
       <div class="flex justify-between">
         <div class="flex gap-2">
-          <label for="theme">テーマ</label>
           <RequiredTag :isRequired="true" />
         </div>
-        <p class="text-right text-gray-400">
-          現在の文字数
-          <span>
-            {{ theme.length }}
-          </span>
-        </p>
       </div>
-      <Field type="text" name="theme" id="theme" v-model="theme" />
+      <Field type="text" name="theme" v-model="theme">
+        <v-text-field label="Theme" :counter="20" v-model="theme" />
+      </Field>
       <ErrorMessage name="theme" class="text-sm text-red-600" />
     </div>
     <div>
       <div class="flex gap-2">
-        <label for="detail">発表内容</label>
         <RequiredTag :isRequired="false" />
       </div>
-      <Field as="textarea" name="detail" id="detail" cols="30" rows="10" v-model="detail" />
-      <ErrorMessage name="detail" class="text-sm text-red-600" />
+      <Field name="memo" v-model="memo">
+        <v-textarea name="memo" id="memo" label="Memo" :counter="20" v-model="memo" />
+      </Field>
+      <ErrorMessage name="memo" class="text-sm text-red-600" />
     </div>
     <div>
       <div class="flex gap-2">
-        <label for="detail">発表日</label>
         <RequiredTag :isRequired="true" />
       </div>
-      <VueDatePicker
-        name="presented_at"
-        v-model="valueOfVueDatePicker"
-        @update:model-value="setDate"
-        placeholder="クリックして日付を選択"
-        format="yyyy/MM/dd"
-        :enable-time-picker="false"
-        locale="ja"
-        week-start="0"
-        auto-apply
-      />
-      <ErrorMessage name="presented_at" class="text-sm text-red-600" />
+      <!-- <Field name="presentedAt" v-model="presentedAt">
+        <v-date-picker label="Presented date"></v-date-picker>
+      </Field> -->
+      <Field name="presentedAt" v-model="presentedAt">
+        <VueDatePicker
+          name="presentedAt"
+          v-model="presentedAt"
+          placeholder="クリックして日付を選択"
+          format="yyyy/MM/dd"
+          :enable-time-picker="false"
+          locale="ja"
+          week-start="0"
+          auto-apply
+        />
+      </Field>
+      <ErrorMessage name="presentedAt" class="text-sm text-red-600" />
     </div>
 
-    <button type="submit" class="flex m-auto btn-blue">Submit</button>
+    <v-row justify="center">
+      <v-col cols="auto">
+        <v-btn type="submit" color="primary">
+          Confirm
+          <v-icon end icon="mdi-page-next-outline"></v-icon>
+        </v-btn>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn color="red" @click="presentationStore.$reset()">
+          Reset
+          <v-icon end icon="mdi-close-circle"></v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
   </Form>
   <div class="w-full text-center flex flex-col gap-5">
     <h4></h4>
@@ -134,7 +148,7 @@ const formatDate = (date: Date): string => {
       </thead>
       <tbody class="text-slate-700">
         <tr v-for="l in lists" class="odd:bg-gray-200">
-          <td class="group">{{ formatDate(l.presented_at) }}</td>
+          <td class="group">{{ dayjs(l.presentedAt).format("YYYY/MM/DD") }}</td>
           <td class="group">{{ l.lastName }} {{ l.firstName }}</td>
           <td class="group">{{ categories[l.category - 1].label }}</td>
           <td class="group">{{ l.theme }}</td>

@@ -1,7 +1,13 @@
+<script setup lang="ts">
+const footerIcons: Array<string> = ["mdi-facebook", "mdi-twitter", "mdi-linkedin", "mdi-instagram"];
+</script>
+
 <template>
-  <footer class="fixed bottom-0 h-15 w-full bg-stone-700">
-    <div class="flex justify-center h-full">
-      <p class="flex items-center text-gray-300">Copyright(C) 2021 ~~~ltd. All rights reserved.</p>
+  <v-footer color="primary" class="block" dark app>
+    <div class="d-flex w-100 align-center px-4">
+      <strong>Copyright(C) {{ new Date().getFullYear() }} RPC-ltd. All rights reserved.</strong>
+      <v-spacer></v-spacer>
+      <v-btn v-for="(icon, index) in footerIcons" :key="index" class="mx-4" :icon="icon" variant="plain" size="small"></v-btn>
     </div>
-  </footer>
+  </v-footer>
 </template>
