@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import { onMounted, onUpdated, reactive, ref } from "vue";
-import NavLink from "../molecules/NavLinks.vue";
-import ToggleButton from "../atoms/ToggleButton.vue";
-import SearchBar from "../molecules/SearchBar.vue";
-import TextLink from "../atoms/TextLink.vue";
-import ToggleMenu from "./ToggleMenu.vue";
+// import NavLink from "../molecules/NavLinks.vue";
+// import ToggleButton from "../atoms/ToggleButton.vue";
+// import SearchBar from "../molecules/SearchBar.vue";
+// import TextLink from "../atoms/TextLink.vue";
+// import ToggleMenu from "./ToggleMenu.vue";
 
 interface State {
   toggle: boolean;
 }
-
+interface NavItem {
+  name: string;
+  icon: string;
+  link: string;
+}
 const state: State = reactive({
   toggle: false,
 });
-const headerIcons = ["mdi-magnify", "mdi-home", "mdi-dots-vertical"];
-const navItems = [
+const headerIcons: string[] = ["mdi-magnify", "mdi-home", "mdi-dots-vertical"];
+const navItems: NavItem[] = [
   {
     name: "Add Presentation",
     icon: "mdi-pencil-plus",

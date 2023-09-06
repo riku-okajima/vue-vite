@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
 
+interface Category {
+  value: number;
+  label: string;
+}
+
 export interface Presentation {
   id: number;
   firstName: string;
@@ -9,7 +14,8 @@ export interface Presentation {
   memo: string;
   presentedAt: Date;
 }
-export const categories = [
+
+export const categories: Category[] = [
   { value: 1, label: "技術" },
   { value: 2, label: "業務" },
   { value: 3, label: "マインド/ビジネススキル" },
@@ -26,9 +32,9 @@ export const usePresentationStore = defineStore("presentation", {
     memo: "" as Presentation["memo"],
     presentedAt: new Date() as Presentation["presentedAt"],
   }),
-  // persist: {
-  //   storage: sessionStorage,
-  // },
+  persist: {
+    storage: localStorage,
+  },
 });
 export const useListsStore = defineStore("lists", {
   state: () => ({
@@ -38,7 +44,7 @@ export const useListsStore = defineStore("lists", {
     addLists(value: Presentation): void {
       const { id, firstName, lastName, category, theme, memo, presentedAt } = value;
       this.lists.push({
-        id: id,
+        id: this.lists.length + 1,
         firstName: firstName,
         lastName: lastName,
         category: Number(category),
@@ -48,7 +54,7 @@ export const useListsStore = defineStore("lists", {
       });
     },
   },
-  // persist: {
-  //   storage: sessionStorage,
-  // },
+  persist: {
+    storage: sessionStorage,
+  },
 });

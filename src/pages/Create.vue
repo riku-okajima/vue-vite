@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form, Field, ErrorMessage, SubmissionHandler } from "vee-validate";
 import { onMounted, ref } from "vue";
-import { storeToRefs } from "pinia";
+import { Store, storeToRefs } from "pinia";
 import { VDatePicker } from "vuetify/labs/VDatePicker";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -23,20 +23,20 @@ const formSchema = yup.object({
   theme: yup.string().required("Theme is required"),
 });
 
-const fetchEmployeesData = async () => {
-  try {
-    const { data } = await supabase.from("employees").select("*");
-    console.log(data);
-  } catch (e) {
-    console.error(e);
-  }
-};
-// 初期表示処理
-onMounted(() => {
-  fetchEmployeesData();
-});
+// const fetchEmployeesData = async () => {
+//   try {
+//     const { data } = await supabase.from("employees").select("*");
+//     console.log(data);
+//   } catch (e) {
+//     console.error(e);
+//   }
+// };
+// // 初期表示処理
+// onMounted(() => {
+//   fetchEmployeesData();
+// });
 // 送信処理
-const onSubmit: SubmissionHandler<any, unknown> = (values: Presentation) => {
+const onSubmit: SubmissionHandler<Presentation, any> = (values: Presentation): void => {
   const { firstName, lastName, category, theme, memo, presentedAt }: Presentation = values;
   const reqData: Presentation = {
     id: presentationStore.id++,
@@ -48,6 +48,7 @@ const onSubmit: SubmissionHandler<any, unknown> = (values: Presentation) => {
     presentedAt: presentedAt,
   };
   listsStore.addLists(reqData);
+  presentationStore.$reset();
 };
 </script>
 <template>
@@ -119,42 +120,42 @@ const onSubmit: SubmissionHandler<any, unknown> = (values: Presentation) => {
       </Field>
       <ErrorMessage name="presentedAt" class="text-sm text-red-600" />
     </div>
-
-    <v-row justify="center">
-      <v-col cols="auto">
-        <v-btn type="submit" color="primary">
-          Confirm
-          <v-icon end icon="mdi-page-next-outline"></v-icon>
-        </v-btn>
-      </v-col>
-      <v-col cols="auto">
-        <v-btn color="red" @click="presentationStore.$reset()">
-          Reset
-          <v-icon end icon="mdi-close-circle"></v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+    <v-btn type="submit" color="primary">
+      ADD
+      <v-icon end icon="mdi-plus-thick"></v-icon>
+    </v-btn>
   </Form>
   <div class="w-full text-center flex flex-col gap-5">
     <h4></h4>
-    <table class="w-full m-auto">
+    <v-table fixed-header height="150px">
       <thead>
-        <tr class="bg-teal-500 text-white">
-          <th scope="col">発表日</th>
-          <th scope="col">発表者</th>
-          <th scope="col">カテゴリ</th>
-          <th scope="col">発表テーマ</th>
+        <tr>
+          <th>発表日</th>
+          <th>発表者</th>
+          <th>カテゴリ</th>
         </tr>
       </thead>
-      <tbody class="text-slate-700">
+      <tbody>
         <tr v-for="l in lists" class="odd:bg-gray-200">
-          <td class="group">{{ dayjs(l.presentedAt).format("YYYY/MM/DD") }}</td>
-          <td class="group">{{ l.lastName }} {{ l.firstName }}</td>
-          <td class="group">{{ categories[l.category - 1].label }}</td>
-          <td class="group">{{ l.theme }}</td>
+          <td>{{ dayjs(l.presentedAt).format("YYYY/MM/DD") }}</td>
+          <td>{{ l.lastName }} {{ l.firstName }}</td>
+          <td>{{ categories[l.category - 1].label }}</td>
         </tr>
       </tbody>
-    </table>
-    <button @click="listsStore.$reset" class="flex m-auto btn-red">Reset</button>
+    </v-table>
+    <v-row justify="center">
+      <v-col cols="auto">
+        <v-btn size="x-large" block type="submit" color="blue">
+          SEND
+          <v-icon end icon="mdi-send"></v-icon>
+        </v-btn>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn size="x-large" color="red" @click="listsStore.$reset()">
+          Reset
+          <v-icon end icon="mdi-close-thick"></v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
