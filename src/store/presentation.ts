@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
-
+import { supabase } from "../supabase";
+// import { setEmployees } from "../pages/Create.vue";
+import { ref } from "vue";
+export interface Employee {
+  id: number;
+  name: string;
+}
 interface Category {
   value: number;
   label: string;
@@ -7,8 +13,7 @@ interface Category {
 
 export interface Presentation {
   id: number;
-  firstName: string;
-  lastName: string;
+  employee: number;
   category: number;
   theme: string;
   memo: string;
@@ -25,13 +30,17 @@ export const categories: Category[] = [
 export const usePresentationStore = defineStore("presentation", {
   state: () => ({
     id: 0 as Presentation["id"],
-    firstName: "" as Presentation["firstName"],
-    lastName: "" as Presentation["lastName"],
+    employee: 1 as Presentation["employee"],
     category: 1 as Presentation["category"],
     theme: "" as Presentation["theme"],
     memo: "" as Presentation["memo"],
     presentedAt: new Date() as Presentation["presentedAt"],
   }),
+  actions: {
+    setEmployee(id: number) {
+      this.employee = id;
+    },
+  },
   persist: {
     storage: localStorage,
   },
@@ -42,11 +51,10 @@ export const useListsStore = defineStore("lists", {
   }),
   actions: {
     addLists(value: Presentation): void {
-      const { id, firstName, lastName, category, theme, memo, presentedAt } = value;
+      const { id, employee, category, theme, memo, presentedAt } = value;
       this.lists.push({
         id: this.lists.length + 1,
-        firstName: firstName,
-        lastName: lastName,
+        employee: Number(employee),
         category: Number(category),
         theme: theme,
         memo: memo,

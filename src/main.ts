@@ -7,11 +7,11 @@ import router from "./router";
 import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
 
-loadFonts();
+loadFonts().then(() => {
+  // 状態管理ライブラリ
+  const pinia = createPinia();
+  // 永続化ライブラリ
+  pinia.use(createPersistedState());
 
-// 状態管理ライブラリ
-const pinia = createPinia();
-// 永続化ライブラリ
-pinia.use(createPersistedState());
-
-createApp(App).use(router).use(pinia).use(vuetify).mount("#app");
+  createApp(App).use(router).use(pinia).use(vuetify).mount("#app");
+});

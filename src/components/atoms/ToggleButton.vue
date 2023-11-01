@@ -1,9 +1,3 @@
 <template>
-  <div class="flex md:hidden">
-    <button class="btn-hamburger" data-target="menu" @click="$emit('clickToggle')">
-      <svg class="block h-6 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-    </button>
-  </div>
+  <v-app-bar-nav-icon @click.stop="$emit('clickToggle')"></v-app-bar-nav-icon>
 </template>

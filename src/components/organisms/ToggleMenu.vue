@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import NavLinks from "../molecules/NavLinks.vue";
-import SearchBar from "../molecules/SearchBar.vue";
+import { useToggle } from "../../lib/useToggle";
 
 const props = defineProps({
   toggleState: { type: Boolean, required: true },
 });
 </script>
 <template>
-  <div id="menu" class="px-4 pb-2 md:hidden" v-show="props.toggleState">
-    <div class="flex flex-col gap-5 text-center">
-      <NavLinks />
-      <div class="block sm:justify-center sm:text-center md:hidden">
-        <div class="sm:m-auto sm:w-72">
-          <SearchBar class="block text-center sm:flex" />
-        </div>
-      </div>
-    </div>
-  </div>
+  <v-navigation-drawer :model-value="props.toggleState" clipped temporary>
+    <v-container>
+      <v-list-item>
+        <v-list-item-title class="title">MENU</v-list-item-title>
+      </v-list-item>
+      <v-divider></v-divider>
+      <NavLinks :element="'tab'" />
+    </v-container>
+  </v-navigation-drawer>
 </template>
