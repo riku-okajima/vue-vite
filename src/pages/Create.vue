@@ -70,7 +70,6 @@ const onSubmit: SubmissionHandler<Presentation, any> = (values: Presentation, { 
   };
   listsStore.addLists(reqData);
   presentationStore.$reset();
-  resetForm();
 };
 </script>
 <template>

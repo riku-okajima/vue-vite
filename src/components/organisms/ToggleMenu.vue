@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import NavLinks from "../molecules/NavLinks.vue";
-import { useToggle } from "../../lib/useToggle";
+import { useToggle } from "../../composable/useToggle";
 
-const props = defineProps({
-  toggleState: { type: Boolean, required: true },
-});
+const { toggleState } = useToggle();
+// const props = defineProps({
+//   toggleState: { type: Boolean, required: true },
+// });
 </script>
 <template>
-  <v-navigation-drawer :model-value="props.toggleState" clipped temporary>
+  <v-navigation-drawer :model-value="toggleState" clipped temporary>
     <v-container>
       <v-list-item>
         <v-list-item-title class="title">MENU</v-list-item-title>
@@ -17,3 +18,4 @@ const props = defineProps({
     </v-container>
   </v-navigation-drawer>
 </template>
+../../composable/useToggle

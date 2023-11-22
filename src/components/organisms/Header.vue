@@ -2,7 +2,7 @@
 import { onMounted, onUpdated, reactive, ref } from "vue";
 import ToggleButton from "../atoms/ToggleButton.vue";
 import Drawer from "./Drawer.vue";
-import { useToggle } from "../../lib/useToggle";
+import { useToggle } from "../../composable/useToggle";
 import ToggleMenu from "./ToggleMenu.vue";
 import NavLinks from "../molecules/NavLinks.vue";
 import Icons from "../molecules/Icons.vue";
@@ -29,4 +29,6 @@ const headerIcons: string[] = ["mdi-magnify", "mdi-home", "mdi-dots-vertical"];
       <NavLinks :element="'tab'" />
     </v-container>
   </v-navigation-drawer>
+  >
 </template>
+../../composable/useToggle

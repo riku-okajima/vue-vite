@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useToggle } from "../../composable/useToggle";
+
 interface NavItem {
   name: string;
   icon: string;
@@ -16,12 +18,14 @@ const navItems: NavItem[] = [
     link: "/list",
   },
 ];
-const props = defineProps({
-  toggleState: { type: Boolean, required: true },
-});
+
+const { toggleState } = useToggle();
+// const props = defineProps({
+//   toggleState: { type: Boolean, required: true },
+// });
 </script>
 <template>
-  <v-navigation-drawer v-model="props.toggleState" clipped temporary>
+  <v-navigation-drawer v-model="toggleState" clipped temporary>
     <v-container>
       <v-list-item>
         <v-list-item-title class="title">MENU</v-list-item-title>
