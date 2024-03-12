@@ -29,6 +29,5 @@ const headerIcons: string[] = ["mdi-magnify", "mdi-home", "mdi-dots-vertical"];
       <NavLinks :element="'tab'" />
     </v-container>
   </v-navigation-drawer>
-  >
 </template>
 ../../composable/useToggle

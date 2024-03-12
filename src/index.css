@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 h4 {
-  @apply mt-6 text-2xl border-b-1;
+  @apply text-2xl border-b-1;
 }
 input,
 textarea {
