@@ -73,7 +73,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = (): void => {
 
 </script>
 <template>
-  <v-sheet v-if="isLoaded" elevation="3" class="m-auto rounded-lg p-10">
+  <v-sheet v-if="isLoaded" elevation="3" class="m-auto rounded-lg py-10 sm:p-10">
     <!-- スキーマは一旦外す（ :validation-schema="formSchema" ） -->
     <Form @submit="onSubmit" class=" flex flex-col">
       <div>
@@ -90,7 +90,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = (): void => {
         </div>
         <Field name="category" v-model="category">
           <v-radio-group v-model="category" inline label="Category">
-            <div class="w-full flex justify-evenly">
+            <div class="w-full block sm:flex justify-evenly">
               <div v-for="c in categories">
                 <v-radio :label="c.label" :value="c.value" v-model="category"></v-radio>
               </div>
@@ -114,8 +114,8 @@ const onSubmit: SubmissionHandler<Presentation, any> = (): void => {
           <RequiredTag :isRequired="true" />
         </div>
         <Field name="presentedAt">
-          <v-row justify="center">
-            <v-date-picker v-model="selectedDate" title="Presented date" width="1200" show-adjacent-months></v-date-picker>
+          <v-row class="mt-0" justify="center">
+            <v-date-picker hide-actions v-model="selectedDate" title="Presented date" width="400" show-adjacent-months></v-date-picker>
           </v-row>
         </Field>
         <ErrorMessage name="presentedAt" class="text-sm text-red-600" />

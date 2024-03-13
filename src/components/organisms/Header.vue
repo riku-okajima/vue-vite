@@ -17,7 +17,9 @@ const headerIcons: string[] = ["mdi-magnify", "mdi-home", "mdi-dots-vertical"];
     <ToggleButton v-on:clickToggle="changeToggleState" />
     <v-toolbar-title>RPC Presentation App</v-toolbar-title>
     <NavLinks :element="'header'" />
-    <Icons :icons="headerIcons" />
+    <div class="hidden sm:flex">
+      <Icons :icons="headerIcons" />
+    </div>
   </v-app-bar>
 
   <v-navigation-drawer v-model="toggleState" clipped temporary>
