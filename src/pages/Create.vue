@@ -1,39 +1,42 @@
 <script setup lang="ts">
-import { Form, Field, ErrorMessage, SubmissionHandler } from "vee-validate";
+import { Field, ErrorMessage, SubmissionHandler } from "vee-validate";
 import { Ref, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { VDatePicker } from "vuetify/labs/VDatePicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-import * as yup from "yup";
 import dayjs from "dayjs";
+import { onClickOutside } from '@vueuse/core'
 import RequiredTag from "../components/atoms/RequiredTag.vue";
 import { usePresentationStore, useListsStore } from "../store/presentation";
-import { Employee, Presentation, Category } from "global"
+import { Employee, Presentation } from "global"
 import { onBeforeMount } from "vue";
 import { watch } from "vue";
 import {fetchEmployeeData, registerPresentationData} from "../repositories/supabase";
 import { categories } from "../constants/const";
 import { useEmployeeStore } from "../store/employee";
+import DeleteButtonXS from "../components/atoms/DeleteButtonXS.vue"
 
 const presentationStore = usePresentationStore();
 const listsStore = useListsStore();
 const { lists } = storeToRefs(listsStore);
 const employeeStore = useEmployeeStore();
 const { employees } = storeToRefs(employeeStore);
-const { employeeId, category, theme,  presentedAt } = storeToRefs(presentationStore);
+const { employeeId, category, theme } = storeToRefs(presentationStore);
 
 
-// バリデーションスキーマ
-const formSchema = yup.object({
-  employee: yup.number().required("Employee is required"),
-  category: yup.number().required("Category is required"),
-  theme: yup.string().required("Theme is required"),
-  memo: yup.string().max(100, "Memo must be less than 100 characters"),
-});
+// バリデーション状態管理
+const formValid: any = ref(false);
+const valiableFormValid: any = ref(false);
+const themeRequiredRules = (value: string) :boolean | string => {
+  return !!value || 'テーマは必須です'
+}
+const themeMaxRules = (value: string) :boolean | string => {
+  return value.length <= 20 || 'テーマは20文字以内で入力してください'
+}
 
 // カレンダーの監視
 const selectedDate: Ref<any[] | undefined> = ref([]);
 watch(selectedDate, (newDate) => {
+  // TODO：フォーマットを加工
   presentationStore.presentedAt = new Date(String(newDate));
 });
 
@@ -51,20 +54,51 @@ onBeforeMount(() => {
 });
 
 // 入力情報格納（ローカルストレージ）
-const addPresentationInfo  = (): void => {
-  const { employeeId, category, theme, presentedAt }: Presentation = presentationStore;
+const addPresentationInfo = async (): Promise<void> => {
+  const result = await formValid.value.validate();
+  if(!result.valid) return;
+  const {presentationId, employeeId, category, theme, presentedAt, formState }: Presentation = presentationStore;
   const reqData: Presentation = {
+    presentationId: Number(presentationId),
     employeeId: Number(employeeId),
     category: Number(category),
     theme: theme,
     presentedAt: presentedAt,
+    formState: false
   };
   listsStore.addLists(reqData);
   presentationStore.$reset();
-} 
+}
+
+// 通常表示→フォーム表示に変更
+const editPresentationInfo = async (index: number) : Promise<void> => {
+  listsStore.changeFormState(index, true);
+}
+// 登録内容をローカルストレージから削除
+const removePresentationInfo = async (index: number) : Promise<void> => {
+  listsStore.removeLists(index);
+}
+// フォームの外側クリックで通常表示に変更
+const valiableForm = ref(null)
+onClickOutside(
+  valiableForm,
+  () => {
+    listsStore.changeFormState(-1);
+  },
+)
+// フォーカス時にフォームが閉じるのを防ぐ
+const preventChangeFormState = (index: number): void => {
+  listsStore.changeFormState(index,true);
+}
 
 // ローカルストレージ→DB登録
-const onSubmit: SubmissionHandler<Presentation, any> = (): void => {
+const onSubmit: SubmissionHandler<Presentation, any> = async (): Promise<void> => {
+  const result = await valiableFormValid.value.validate();
+  if (!result.valid) {
+    alert("エラーがあります");
+    return;
+  }
+  if (!lists.value.length) return;
   registerPresentationData(lists.value).then(() => {
     alert("DB登録が完了しました");
     listsStore.$reset();
@@ -74,8 +108,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = (): void => {
 </script>
 <template>
   <v-sheet v-if="isLoaded" elevation="3" class="m-auto rounded-lg py-10 sm:p-10">
-    <!-- スキーマは一旦外す（ :validation-schema="formSchema" ） -->
-    <Form @submit="onSubmit" class=" flex flex-col">
+    <v-form fast-fail ref="formValid" class="flex flex-col">
       <div>
         <div class="flex">
           <RequiredTag :isRequired="true" />
@@ -105,7 +138,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = (): void => {
           </div>
         </div>
         <Field type="text" name="theme" v-model="theme">
-          <v-text-field label="Theme" :counter="20" v-model="theme" />
+          <v-text-field label="Theme" :counter="20" v-model="theme" :rules="[themeRequiredRules, themeMaxRules]"/>
         </Field>
         <ErrorMessage name="theme" class="text-sm text-red-600" />
       </div>
@@ -115,7 +148,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = (): void => {
         </div>
         <Field name="presentedAt">
           <v-row class="mt-0" justify="center">
-            <v-date-picker hide-actions v-model="selectedDate" title="Presented date" width="400" show-adjacent-months></v-date-picker>
+            <v-date-picker elevation="10" color="primary" hide-actions v-model="selectedDate" title="Presented date" show-adjacent-months></v-date-picker>
           </v-row>
         </Field>
         <ErrorMessage name="presentedAt" class="text-sm text-red-600" />
@@ -124,32 +157,46 @@ const onSubmit: SubmissionHandler<Presentation, any> = (): void => {
         ADD
         <v-icon end icon="mdi-plus-thick"></v-icon>
       </v-btn>
-      <div class="w-full flex flex-col mt-8 ">
-        <v-row>
-          <v-col v-for="l in lists" cols="6">
-            <v-card>
-              <v-card-title>{{ l.theme }}</v-card-title>
-              <v-card-subtitle><v-icon>mdi-calendar-range</v-icon> {{ dayjs(l.presentedAt).format("YYYY/MM/DD") }}</v-card-subtitle>
-              <v-card-subtitle><v-icon>mdi-account</v-icon> {{ employee_list.find(emp => emp.employeeId == l.employeeId)?.name }}</v-card-subtitle>
-              <v-card-subtitle><v-icon>mdi-alpha-c-circle</v-icon> {{ categories[l.category - 1].label }}</v-card-subtitle>
-            </v-card>
-          </v-col>
-        </v-row>
-        <v-row justify="center">
-          <v-col cols="auto">
-            <v-btn size="x-large" block type="submit" color="blue">
-              SEND
-              <v-icon end icon="mdi-send"></v-icon>
-            </v-btn>
-          </v-col>
-          <v-col cols="auto">
-            <v-btn size="x-large" color="red" @click="listsStore.$reset()">
-              Reset
-            <v-icon end icon="mdi-close-thick"></v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
+      <div class="w-full flex flex-col mt-8">
+        <v-form fast-fail ref="valiableFormValid" class="flex flex-col">
+          <v-row>
+            <v-col v-for="item,index in lists" cols="12" md="6">
+              <v-card v-show="!item.formState">
+                <v-card-title>{{ item.theme }}</v-card-title>
+                <v-card-subtitle><v-icon>mdi-calendar-range</v-icon> {{ dayjs(item.presentedAt).format("YYYY/MM/DD") }}</v-card-subtitle>
+                <v-card-subtitle><v-icon>mdi-account</v-icon> {{ employee_list.find(emp => emp.employeeId == item.employeeId)?.name }}</v-card-subtitle>
+                <v-card-subtitle><v-icon>mdi-alpha-c-circle</v-icon> {{ categories[item.category - 1].label }}</v-card-subtitle>
+                <div class="w-full flex justify-end gap-1.5 absolute bottom-1.5 right-1.5">
+                  <v-btn icon="mdi-pencil" size="x-small" color="green" @click="editPresentationInfo(index)"></v-btn>
+                  <DeleteButtonXS v-on:clickDelete="removePresentationInfo(index)"/>
+                </div>
+              </v-card>
+              <v-card v-show="item.formState" ref="valiableForm">
+                  <Field type="text" name="theme" v-model="item.theme">
+                    <v-text-field label="Theme" :counter="20" v-model="item.theme" @click="preventChangeFormState(index)" :rules="[themeRequiredRules, themeMaxRules]"/>
+                  </Field>
+                  <input type="datetime-local" v-model="item.presentedAt" required @click="preventChangeFormState(index)">
+                  <v-select :items="employees" item-title="name" item-value="employeeId" label="Employee" v-model="item.employeeId" @click="preventChangeFormState(index)"/>
+                  <v-select :items="categories" item-title="label" item-value="value" label="Category" v-model="item.category" @click="preventChangeFormState(index)"/>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="auto">
+              <v-btn size="x-large" block @click="onSubmit" color="blue">
+                SEND
+                <v-icon end icon="mdi-send"></v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn size="x-large" color="red" @click="listsStore.$reset()">
+                Reset
+              <v-icon end icon="mdi-close-thick"></v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
       </div>
-    </Form>
+    </v-form>
   </v-sheet>
 </template>

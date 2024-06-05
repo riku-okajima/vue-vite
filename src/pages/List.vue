@@ -1,27 +1,29 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
-import { storeToRefs } from "pinia";
 import { Ref, onBeforeMount, ref } from "vue";
-import { usePresentationStore, useListsStore } from "../store/presentation";
 import { Employee, Presentation } from "global";
-import { fetchPresentationData } from "../repositories/supabase";
+import { deletePresentationData, fetchPresentationData } from "../repositories/supabase";
 import { categories } from "../constants/const";
+import EditButtonXS from "../components/atoms/EditButtonXS.vue"
+import DeleteButtonXS from "../components/atoms/DeleteButtonXS.vue"
 
 const presentation_list: Ref<Presentation[]> = ref([]);
 const employee_list: Ref<Employee[]> = ref([]);
 onBeforeMount(() => {
   fetchPresentationData(presentation_list, employee_list);
 });
+
 </script>
 <template>
   <v-sheet elevation="3" class="m-auto rounded-lg p-4">
-    <v-table fixed-header v-cloak>
+    <v-table class="overflow-x-auto" fixed-header v-cloak>
       <thead>
         <tr>
           <th>発表日</th>
           <th>発表者</th>
           <th>カテゴリ</th>
           <th>テーマ</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -30,6 +32,10 @@ onBeforeMount(() => {
           <td>{{ employee_list.find(emp => emp.employeeId == l.employeeId)?.name }}</td>
           <td>{{ categories[l.category - 1].label }}</td>
           <td>{{ l.theme }}</td>
+          <td class="flex justify-evenly items-center">
+            <EditButtonXS />
+            <DeleteButtonXS v-on:clickDelete="deletePresentationData(l.presentationId)"/>
+          </td>
         </tr>
       </tbody>
     </v-table>

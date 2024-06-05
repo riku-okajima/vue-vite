@@ -13,10 +13,12 @@ declare module "global" {
         label: string;
     }
     interface Presentation {
+        presentationId: number;
         employeeId: number;
         category: number;
         theme: string;
         presentedAt: Date;
+        formState: boolean;
     }
 
     export { PageHeaderValue, Employee, Category, Presentation }
