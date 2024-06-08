@@ -1,6 +1,7 @@
 import { Ref } from "vue";
 import { Employee, Presentation } from "global";
 import { supabase } from "../supabase";
+import { format } from "date-fns/format";
 
 // 社員情報の取得
 export const fetchEmployeeData = async (employee_list: Ref<Employee[]>): Promise<void> => {
@@ -43,7 +44,7 @@ export const fetchPresentationData = async (presentation_list: Ref<Presentation[
 export const registerPresentationData = async (presentationList: Presentation[]): Promise<void> => {
   try {
     const modifiedList = presentationList.map(item => {
-      return {employee_id: item.employeeId, category: item.category, theme: item.theme, presented_at: item.presentedAt};
+      return {employee_id: item.employeeId, category: item.category, theme: item.theme, presented_at: format(item.presentedAt, "yyyy-MM-dd")};
     });
     const response = await supabase.from("presentation").insert(modifiedList);
   } catch(e) {

@@ -13,6 +13,13 @@ onBeforeMount(() => {
   fetchPresentationData(presentation_list, employee_list);
 });
 
+const deleteEvent = async (presentation: Presentation) => {
+  await deletePresentationData(presentation.presentationId).then(() => {
+    presentation_list.value = presentation_list.value.filter(item => {
+      return item.presentationId != presentation.presentationId;
+    })
+  })
+}
 </script>
 <template>
   <v-sheet elevation="3" class="m-auto rounded-lg p-4">
@@ -27,14 +34,14 @@ onBeforeMount(() => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="l in presentation_list" class="odd:bg-gray-200">
-          <td>{{ dayjs(l.presentedAt).format("YYYY/MM/DD") }}</td>
-          <td>{{ employee_list.find(emp => emp.employeeId == l.employeeId)?.name }}</td>
-          <td>{{ categories[l.category - 1].label }}</td>
-          <td>{{ l.theme }}</td>
+        <tr v-for="item in presentation_list" class="odd:bg-gray-200">
+          <td>{{ dayjs(item.presentedAt).format("YYYY/MM/DD") }}</td>
+          <td>{{ employee_list.find(emp => emp.employeeId == item.employeeId)?.name }}</td>
+          <td>{{ categories[item.category - 1].label }}</td>
+          <td>{{ item.theme }}</td>
           <td class="flex justify-evenly items-center">
             <EditButtonXS />
-            <DeleteButtonXS v-on:clickDelete="deletePresentationData(l.presentationId)"/>
+            <DeleteButtonXS v-on:clickDelete="deleteEvent(item)"/>
           </td>
         </tr>
       </tbody>
