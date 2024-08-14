@@ -59,7 +59,7 @@ const addPresentationInfo = async (): Promise<void> => {
   if(!result.valid) return;
   const {presentationId, employeeId, category, theme, presentedAt, formState }: Presentation = presentationStore;
   const reqData: Presentation = {
-    presentationId: Number(presentationId),
+    presentationId: lists.value.length + 1,
     employeeId: Number(employeeId),
     category: Number(category),
     theme: theme,
@@ -175,7 +175,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = async (): Promise<void> =
                   <Field type="text" name="theme" v-model="item.theme">
                     <v-text-field label="Theme" :counter="20" v-model="item.theme" @click="preventChangeFormState(index)" :rules="[themeRequiredRules, themeMaxRules]"/>
                   </Field>
-                  <input type="datetime-local" v-model="item.presentedAt" required @click="preventChangeFormState(index)">
+                  <input type="date" v-model="item.presentedAt" required @click="preventChangeFormState(index)">
                   <v-select :items="employees" item-title="name" item-value="employeeId" label="Employee" v-model="item.employeeId" @click="preventChangeFormState(index)"/>
                   <v-select :items="categories" item-title="label" item-value="value" label="Category" v-model="item.category" @click="preventChangeFormState(index)"/>
               </v-card>
