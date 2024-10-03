@@ -2,20 +2,21 @@
 import dayjs from "dayjs";
 import { Ref, onBeforeMount, ref } from "vue";
 import { Employee, Presentation } from "global";
-import { deletePresentationData, fetchPresentationData } from "../repositories/supabase";
-import { categories } from "../constants/const";
+import { deletePresentationData } from "../repositories/supabase";
+import {fetchPresentationData} from "../repositories/api"
+import { categories } from "../constant/const";
 import EditButtonXS from "../components/atoms/EditButtonXS.vue"
 import DeleteButtonXS from "../components/atoms/DeleteButtonXS.vue"
 
-const presentation_list: Ref<Presentation[]> = ref([]);
-const employee_list: Ref<Employee[]> = ref([]);
+const presentationList: Ref<Presentation[]> = ref([]);
+const employeeList: Ref<Employee[]> = ref([]);
 onBeforeMount(() => {
-  fetchPresentationData(presentation_list, employee_list);
+  fetchPresentationData(presentationList, employeeList);
 });
 
 const deleteEvent = async (presentation: Presentation) => {
   await deletePresentationData(presentation.presentationId).then(() => {
-    presentation_list.value = presentation_list.value.filter(item => {
+    presentationList.value = presentationList.value.filter(item => {
       return item.presentationId != presentation.presentationId;
     })
   })
@@ -34,9 +35,9 @@ const deleteEvent = async (presentation: Presentation) => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in presentation_list" class="odd:bg-gray-200">
+        <tr v-for="item in presentationList" class="odd:bg-gray-200">
           <td>{{ dayjs(item.presentedAt).format("YYYY/MM/DD") }}</td>
-          <td>{{ employee_list.find(emp => emp.employeeId == item.employeeId)?.name }}</td>
+          <td>{{ employeeList.find(emp => emp.employeeId == item.employeeId)?.name }}</td>
           <td>{{ categories[item.category - 1].label }}</td>
           <td>{{ item.theme }}</td>
           <td class="flex justify-evenly items-center">

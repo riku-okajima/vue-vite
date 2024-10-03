@@ -4,7 +4,7 @@ import { supabase } from "../supabase";
 import { format } from "date-fns/format";
 
 // 社員情報の取得
-export const fetchEmployeeData = async (employee_list: Ref<Employee[]>): Promise<void> => {
+export const fetchEmployeeData = async (employeeList: Ref<Employee[]>): Promise<void> => {
   try {
     const { data, status }: any = await supabase
       .from("employee")
@@ -13,7 +13,7 @@ export const fetchEmployeeData = async (employee_list: Ref<Employee[]>): Promise
       .order("employee_id", { ascending: true });
     if (status == 200 && data.length != 0) {
       data.forEach((item: any, index: number) => {
-        employee_list.value.push({ employeeId: item["employee_id"], name: item["last_name"] + " " + item["first_name"] });
+        employeeList.value.push({ employeeId: item["employee_id"], name: item["last_name"] + " " + item["first_name"] });
       });
     }
   } catch (e) {
@@ -22,7 +22,7 @@ export const fetchEmployeeData = async (employee_list: Ref<Employee[]>): Promise
 };
 
 // 発表情報の取得
-export const fetchPresentationData = async (presentation_list: Ref<Presentation[]>,employee_list: Ref<Employee[]>): Promise<void> => {
+export const fetchPresentationData = async (presentationList: Ref<Presentation[]>,employeeList: Ref<Employee[]>): Promise<void> => {
   try {
     const { data, status }: any = await supabase
     .from("presentation")
@@ -31,8 +31,8 @@ export const fetchPresentationData = async (presentation_list: Ref<Presentation[
     .order("presentation_id", { ascending: true });
     if (status == 200 && data.length != 0) {
       data.forEach((item: any, index: number) => {
-        presentation_list.value.push({presentationId: Number(item["presentation_id"]), employeeId: Number(item["employee_id"]), category: item["category"], theme: item["theme"], presentedAt: item["presented_at"], formState: false });
-        employee_list.value.push({ employeeId: item["employee_id"], name: item["employee"]["last_name"] + " " + item["employee"]["first_name"] });
+        presentationList.value.push({presentationId: Number(item["presentation_id"]), employeeId: Number(item["employee_id"]), category: item["category"], theme: item["theme"], presentedAt: item["presented_at"], formState: false });
+        employeeList.value.push({ employeeId: item["employee_id"], name: item["employee"]["last_name"] + " " + item["employee"]["first_name"] });
       });
     }
   } catch (e) {
@@ -57,7 +57,7 @@ export const deletePresentationData = async (presentationId: number) => {
   try {
     const response = await supabase
     .from("presentation")
-    .update({delete_flg: 9, delete_at: new Date()})
+    .update({delete_flg: 9, deleted_at: new Date()})
     .eq("presentation_id", presentationId);
   } catch(e) {
     console.error(e)

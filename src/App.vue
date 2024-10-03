@@ -2,7 +2,7 @@
 import { Ref, ref, watch } from "vue";
 import { RouteRecordName, RouteRecordRaw, Router, useRouter } from "vue-router";
 import Layout from "./components/templates/Layout.vue";
-import { PAGE_HEADER } from "./constants/const";
+import { PAGE_HEADER } from "./constant/const";
 
 const router:Router = useRouter()
 const pageTitle: Ref<string|undefined> = ref('')

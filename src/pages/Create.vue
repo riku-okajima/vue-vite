@@ -10,8 +10,8 @@ import { usePresentationStore, useListsStore } from "../store/presentation";
 import { Employee, Presentation } from "global"
 import { onBeforeMount } from "vue";
 import { watch } from "vue";
-import {fetchEmployeeData, registerPresentationData} from "../repositories/supabase";
-import { categories } from "../constants/const";
+import {fetchEmployeeData, registerPresentationData} from "../repositories/api";
+import { categories } from "../constant/const";
 import { useEmployeeStore } from "../store/employee";
 import DeleteButtonXS from "../components/atoms/DeleteButtonXS.vue"
 
@@ -42,13 +42,13 @@ watch(selectedDate, (newDate) => {
 
 // 初期表示
 const isLoaded: Ref<Boolean> = ref(false);
-const employee_list: Ref<Employee[]> = ref([]);
+const employeeList: Ref<Employee[]> = ref([]);
 onBeforeMount(() => {
-  fetchEmployeeData(employee_list).then(() => {
+  fetchEmployeeData(employeeList).then(() => {
     isLoaded.value = true;
-    if(employee_list.value.length){
-      employeeStore.addLists(employee_list.value);
-      presentationStore.setEmployee(employee_list.value[0].employeeId)
+    if(employeeList.value.length){
+      employeeStore.addLists(employeeList.value);
+      presentationStore.setEmployee(employeeList.value[0].employeeId)
     }
   });
 });
@@ -164,7 +164,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = async (): Promise<void> =
               <v-card v-show="!item.formState">
                 <v-card-title>{{ item.theme }}</v-card-title>
                 <v-card-subtitle><v-icon>mdi-calendar-range</v-icon> {{ dayjs(item.presentedAt).format("YYYY/MM/DD") }}</v-card-subtitle>
-                <v-card-subtitle><v-icon>mdi-account</v-icon> {{ employee_list.find(emp => emp.employeeId == item.employeeId)?.name }}</v-card-subtitle>
+                <v-card-subtitle><v-icon>mdi-account</v-icon> {{ employeeList.find(emp => emp.employeeId == item.employeeId)?.name }}</v-card-subtitle>
                 <v-card-subtitle><v-icon>mdi-alpha-c-circle</v-icon> {{ categories[item.category - 1].label }}</v-card-subtitle>
                 <div class="w-full flex justify-end gap-1.5 absolute bottom-1.5 right-1.5">
                   <v-btn icon="mdi-pencil" size="x-small" color="green" @click="editPresentationInfo(index)"></v-btn>
