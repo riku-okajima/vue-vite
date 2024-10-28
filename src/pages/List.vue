@@ -2,8 +2,7 @@
 import dayjs from "dayjs";
 import { Ref, onBeforeMount, ref } from "vue";
 import { Employee, Presentation } from "global";
-import { deletePresentationData } from "../repositories/supabase";
-import {fetchPresentationData} from "../repositories/api"
+import {fetchPresentationData, deletePresentationData} from "../repositories/api"
 import { categories } from "../constant/const";
 import EditButtonXS from "../components/atoms/EditButtonXS.vue"
 import DeleteButtonXS from "../components/atoms/DeleteButtonXS.vue"

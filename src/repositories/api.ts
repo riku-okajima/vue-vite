@@ -56,10 +56,19 @@ export const registerPresentationData = async (presentationList: Presentation[])
         const request = presentationList.map(item => {
             return {employeeId: item.employeeId, category: item.category, theme: item.theme, presentedAt: format(item.presentedAt, "yyyy-MM-dd")};
         });
-        const response:[] = await api.post('presentation/create/', {json: request}).json();
+        const response = await api.post('presentation/create/', {json: request}).json();
     } catch(e) {
         console.error(e)
     }
 };
+
+// 発表情報の削除
+export const deletePresentationData = async (presentationId: number) => {
+    try {
+        const response = await api.delete('presentation/delete/', {searchParams: {presentationId: presentationId }})
+    } catch(e) {
+        console.error(e)
+    }
+}
   
 
