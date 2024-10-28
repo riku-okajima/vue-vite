@@ -40,7 +40,6 @@ export const fetchEmployeeData = async (employeeList: Ref<Employee[]>): Promise<
 export const fetchPresentationData = async (presentationList: Ref<Presentation[]>,employeeList: Ref<Employee[]>): Promise<void> => {
     try {
         const response:[] = await api.get('presentation/').json();
-        console.log(response);
         response.forEach((item: any, index: number) => {
             presentationList.value.push({presentationId: Number(item["presentationId"]), employeeId: Number(item["employeeId"]), category: item["category"], theme: item["theme"], presentedAt: item["presentedAt"], formState: false });
             employeeList.value.push({ employeeId: item["employeeId"], name: item["lastName"] + " " + item["firstName"] });

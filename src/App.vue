@@ -2,7 +2,7 @@
 import { Ref, ref, watch } from "vue";
 import { RouteRecordName, RouteRecordRaw, Router, useRouter } from "vue-router";
 import Layout from "./components/templates/Layout.vue";
-import { PAGE_HEADER } from "./constant/const";
+import { ROUTE_HEADING_MAPPER } from "./constant/const";
 
 const router:Router = useRouter()
 const pageTitle: Ref<string|undefined> = ref('')
@@ -10,7 +10,7 @@ const pageTitle: Ref<string|undefined> = ref('')
 const updatePageTitle = () => {
   const routeList: readonly RouteRecordRaw[] = router.options.routes
   const targetRouteName:RouteRecordName|undefined = routeList.find(route => route['path'] == router.currentRoute.value.path)?.name
-  pageTitle.value = PAGE_HEADER.find(item => item['name'] == targetRouteName)?.title
+  pageTitle.value = ROUTE_HEADING_MAPPER.find(item => item['name'] == targetRouteName)?.title
 }
 watch(() => router.currentRoute.value.path, () => {updatePageTitle()})
 

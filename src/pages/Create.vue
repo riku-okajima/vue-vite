@@ -11,10 +11,12 @@ import { Employee, Presentation } from "global"
 import { onBeforeMount } from "vue";
 import { watch } from "vue";
 import {fetchEmployeeData, registerPresentationData} from "../repositories/api";
-import { categories } from "../constant/const";
+import { CATEGORIES } from "../constant/const";
 import { useEmployeeStore } from "../store/employee";
 import DeleteButtonXS from "../components/atoms/DeleteButtonXS.vue"
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const presentationStore = usePresentationStore();
 const listsStore = useListsStore();
 const { lists } = storeToRefs(listsStore);
@@ -102,6 +104,8 @@ const onSubmit: SubmissionHandler<Presentation, any> = async (): Promise<void> =
   registerPresentationData(lists.value).then(() => {
     alert("DB登録が完了しました");
     listsStore.$reset();
+    
+  router.push({name: "List"});
   });
 };
 
@@ -124,7 +128,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = async (): Promise<void> =
         <Field name="category" v-model="category">
           <v-radio-group v-model="category" inline label="Category">
             <div class="w-full block sm:flex justify-evenly">
-              <div v-for="c in categories">
+              <div v-for="c in CATEGORIES">
                 <v-radio :label="c.label" :value="c.value" v-model="category"></v-radio>
               </div>
             </div>
@@ -165,7 +169,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = async (): Promise<void> =
                 <v-card-title>{{ item.theme }}</v-card-title>
                 <v-card-subtitle><v-icon>mdi-calendar-range</v-icon> {{ dayjs(item.presentedAt).format("YYYY/MM/DD") }}</v-card-subtitle>
                 <v-card-subtitle><v-icon>mdi-account</v-icon> {{ employeeList.find(emp => emp.employeeId == item.employeeId)?.name }}</v-card-subtitle>
-                <v-card-subtitle><v-icon>mdi-alpha-c-circle</v-icon> {{ categories[item.category - 1].label }}</v-card-subtitle>
+                <v-card-subtitle><v-icon>mdi-alpha-c-circle</v-icon> {{ CATEGORIES[item.category - 1].label }}</v-card-subtitle>
                 <div class="w-full flex justify-end gap-1.5 absolute bottom-1.5 right-1.5">
                   <v-btn icon="mdi-pencil" size="x-small" color="green" @click="editPresentationInfo(index)"></v-btn>
                   <DeleteButtonXS v-on:clickDelete="removePresentationInfo(index)"/>
@@ -177,7 +181,7 @@ const onSubmit: SubmissionHandler<Presentation, any> = async (): Promise<void> =
                   </Field>
                   <input type="date" v-model="item.presentedAt" required @click="preventChangeFormState(index)">
                   <v-select :items="employees" item-title="name" item-value="employeeId" label="Employee" v-model="item.employeeId" @click="preventChangeFormState(index)"/>
-                  <v-select :items="categories" item-title="label" item-value="value" label="Category" v-model="item.category" @click="preventChangeFormState(index)"/>
+                  <v-select :items="CATEGORIES" item-title="label" item-value="value" label="Category" v-model="item.category" @click="preventChangeFormState(index)"/>
               </v-card>
             </v-col>
           </v-row>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Icons from "../molecules/Icons.vue";
-const footerIcons: Array<string> = ["mdi-facebook", "mdi-twitter", "mdi-linkedin", "mdi-instagram"];
+import { FOOTER_ICONS } from "../../constant/const";
 </script>
 
 <template>
@@ -8,7 +8,7 @@ const footerIcons: Array<string> = ["mdi-facebook", "mdi-twitter", "mdi-linkedin
     <div class="block w-100 align-center md:px-4 md:flex text-center">
       <strong>Copyright(C) {{ new Date().getFullYear() }} RPC-ltd. All rights reserved.</strong>
       <v-spacer></v-spacer>
-      <Icons :icons="footerIcons" />
+      <Icons :icons="FOOTER_ICONS" />
     </div>
   </v-footer>
 </template>

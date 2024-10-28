@@ -1,17 +1,21 @@
 declare module "global" {
-    
-    interface PageHeaderValue {
+
+    interface NavItem {
         name: string;
-        title: string;
+        icon: string;
+        link: string;
     }
+    
     interface Employee {
         employeeId: number;
         name: string;
     }
+
     interface Category {
         value: number;
         label: string;
     }
+
     interface Presentation {
         presentationId: number;
         employeeId: number;
@@ -21,5 +25,5 @@ declare module "global" {
         formState: boolean;
     }
 
-    export { PageHeaderValue, Employee, Category, Presentation }
+    export { NavItem, Employee, Category, Presentation }
 }

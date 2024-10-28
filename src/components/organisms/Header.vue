@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, reactive, ref } from "vue";
 import ToggleButton from "../atoms/ToggleButton.vue";
-import Drawer from "./Drawer.vue";
 import { useToggle } from "../../composable/useToggle";
-import ToggleMenu from "./ToggleMenu.vue";
 import NavLinks from "../molecules/NavLinks.vue";
 import Icons from "../molecules/Icons.vue";
+import { HEADER_ICONS } from "../../constant/const";
 
 const { toggleState, changeToggleState } = useToggle();
 
-const headerIcons: string[] = ["mdi-magnify", "mdi-home", "mdi-dots-vertical"];
 </script>
 
 <template>
@@ -18,7 +15,7 @@ const headerIcons: string[] = ["mdi-magnify", "mdi-home", "mdi-dots-vertical"];
     <v-toolbar-title>RPC Presentation App</v-toolbar-title>
     <NavLinks :element="'header'" />
     <div class="hidden sm:flex">
-      <Icons :icons="headerIcons" />
+      <Icons :icons="HEADER_ICONS" />
     </div>
   </v-app-bar>
 
@@ -32,4 +29,3 @@ const headerIcons: string[] = ["mdi-magnify", "mdi-home", "mdi-dots-vertical"];
     </v-container>
   </v-navigation-drawer>
 </template>
-../../composable/useToggle
