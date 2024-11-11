@@ -26,13 +26,14 @@
     "roboto-fontface": "*",
     "tailwindcss": "^3.4.1",
     "vee-validate": "^4.12.6",
-    "vue": "^3.4.21",
+    "vue": "^3.5.12",
     "vue-router": "^4.3.0",
     "vuetify": "^3.5.11",
     "webfontloader": "^1.6.28",
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/node": "^20.11.30",
     "@types/webfontloader": "^1.6.38",
     "@vitejs/plugin-vue": "^5.0.4",
@@ -42,7 +43,7 @@
     "prettier": "^3.2.5",
     "typescript": "^5.4.3",
     "vite": "^5.2.6",
-    "vue-tsc": "^2.0.7"
+    "vue-tsc": "^2.1.10"
   },
   "type": "module"
 }

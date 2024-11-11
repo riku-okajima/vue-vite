@@ -3,9 +3,6 @@ import NavLinks from "../molecules/NavLinks.vue";
 import { useToggle } from "../../composable/useToggle";
 
 const { toggleState } = useToggle();
-// const props = defineProps({
-//   toggleState: { type: Boolean, required: true },
-// });
 </script>
 <template>
   <v-navigation-drawer :model-value="toggleState" clipped temporary>
@@ -18,4 +15,3 @@ const { toggleState } = useToggle();
     </v-container>
   </v-navigation-drawer>
 </template>
-../../composable/useToggle
